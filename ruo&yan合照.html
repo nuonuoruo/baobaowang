@@ -214,7 +214,6 @@
       font-size: 14px;
     }
 
-    /* Apple Photos 风格：瀑布流 */
     .gallery {
       column-count: 5;
       column-gap: 14px;
@@ -304,6 +303,8 @@
       opacity: 0;
       transform: scale(0.95);
       transition: opacity .18s ease, transform .18s ease, background .18s ease;
+      font-size: 22px;
+      line-height: 1;
     }
 
     .photo-card:hover .del-btn {
@@ -428,17 +429,11 @@
       });
     }
 
-    function getExt(fileName) {
-      const idx = fileName.lastIndexOf(".");
-      return idx >= 0 ? fileName.slice(idx) : "";
-    }
-
+    // ✅ 重点修复：文件名只使用英文/数字/随机串，避免 Invalid key
     function createUniqueFileName(originalName) {
-      const ext = getExt(originalName);
-      const base = originalName.replace(/\.[^.]+$/, "")
-        .replace(/\s+/g, "_")
-        .replace(/[^\w\u4e00-\u9fa5-]/g, "_");
-      return `${Date.now()}_${base}_${Math.random().toString(36).slice(2, 8)}${ext}`;
+      const extMatch = originalName.match(/\.[^.]+$/);
+      const ext = extMatch ? extMatch[0].toLowerCase() : "";
+      return `${Date.now()}_${Math.random().toString(36).slice(2, 10)}${ext}`;
     }
 
     // ====== 加载相册 ======
@@ -473,12 +468,11 @@
         return;
       }
 
-      // 并行生成签名链接
       const items = await Promise.all(
         files.map(async (file) => {
           const { data: urlData, error: urlError } = await supabaseClient.storage
             .from(BUCKET_NAME)
-            .createSignedUrl(file.name, 60 * 60); // 1小时
+            .createSignedUrl(file.name, 60 * 60);
 
           if (urlError || !urlData?.signedUrl) {
             console.error("签名链接失败：", file.name, urlError);
@@ -585,7 +579,6 @@
       img.alt = "相册照片";
       img.loading = "lazy";
 
-      // 让图片高度更接近 Apple Photos 的自然感
       img.addEventListener("load", () => {
         const ratio = img.naturalHeight / img.naturalWidth;
         const maxHeight = 420;
@@ -622,7 +615,7 @@
       galleryEl.appendChild(card);
     }
 
-    // 让按钮 onclick 能直接调用
+    // 让按钮 onclick 可以直接调用
     window.uploadImage = uploadImage;
     window.loadGallery = loadGallery;
   </script>
