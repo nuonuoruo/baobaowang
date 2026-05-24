@@ -1,0 +1,59 @@
+body{
+   background-color:lightblue
+}
+h1{
+   text-align: center;
+  color:pink
+ 
+ 
+}
+
+/* 修改按钮的大小和颜色 */
+.button {
+    display: inline-block;
+    padding: 20px 40px; /* 增大按钮的大小 */
+    margin: 10px;
+    background-color:pink; /* 背景色 */
+    color: white; /* 文本颜色：白色 */
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px; /* 圆角按钮 */
+    font-size: 16px; /* 增大字体 */
+    border: none; /* 去掉按钮边框 */
+    cursor: pointer; /* 鼠标悬停时显示手形 */
+}
+
+.button:hover {
+    background-color: lightpink; /* 鼠标悬停时背景颜色变深 */
+}
+/* 设置轮播容器的大小和溢出隐藏 */
+.slider {
+    width: 100%;
+    max-width:200px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+/* 设置轮播的内容（图片） */
+.slides {
+    display: flex;
+    transition: transform 1s ease;
+}
+
+/* 每张图片 */
+.slide {
+    width: 100%;
+    flex-shrink: 0;
+}
+
+/* 图片的样式 */
+.slide img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+  <style>
+     
+
+    </style>

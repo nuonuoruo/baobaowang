@@ -1,0 +1,130 @@
+ <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ruo&yan合照</title>
+
+   <link rel="stylesheet" href="宝宝网/style2.css">
+</head>
+
+<body>
+
+<h2>我们的相册 ❤️</h2>
+
+<input type="file" id="fileInput">
+
+<button onclick="uploadImage()">
+上传照片
+</button>
+
+<div id="gallery"></div>
+
+<div class="image-grid">
+
+<img src="宝宝网/合照/1.jpg">
+<img src="宝宝网/合照/2.jpg">
+<img src="宝宝网/合照/3.jpg">
+<img src="宝宝网/合照/4.jpg">
+<img src="宝宝网/合照/5.jpg">
+<img src="宝宝网/合照/6.jpg">
+<img src="宝宝网/合照/7.jpg">
+<img src="宝宝网/合照/8.jpg">
+<img src="宝宝网/合照/9.jpg">
+<img src="宝宝网/合照/10.jpg">
+<img src="宝宝网/合照/11.jpg">
+<img src="宝宝网/合照/12.jpg">
+<img src="宝宝网/合照/13.jpg">
+<img src="宝宝网/合照/14.jpg">
+<img src="宝宝网/合照/15.jpg">
+<img src="宝宝网/合照/16.jpg">
+<img src="宝宝网/合照/17.jpg">
+<img src="宝宝网/合照/18.jpg">
+<img src="宝宝网/合照/19.jpg">
+<img src="宝宝网/合照/20.jpg">
+<img src="宝宝网/合照/21.jpg">
+<img src="宝宝网/合照/22.jpg">
+<img src="宝宝网/合照/23.jpg">
+<img src="宝宝网/合照/24.jpg">
+<img src="宝宝网/合照/25.jpg">
+
+</div>
+
+<script>
+
+const gallery =
+document.getElementById("gallery");
+
+async function uploadImage(){
+
+    const file =
+    document.getElementById("fileInput").files[0];
+
+    if(!file){
+
+        alert("请选择照片");
+
+        return;
+    }
+
+    const formData =
+    new FormData();
+
+    formData.append("file", file);
+
+    formData.append(
+        "upload_preset",
+        "myphotos"
+    );
+
+    const response = await fetch(
+
+        "https://api.cloudinary.com/v1_1/dhgwaxc53/image/upload",
+
+        {
+            method:"POST",
+            body:formData
+        }
+    );
+
+    const data =
+    await response.json();
+
+    addImage(data.secure_url);
+}
+
+function addImage(url){
+
+    const container =
+    document.createElement("div");
+
+    container.className =
+    "photo-box";
+
+    const img =
+    document.createElement("img");
+
+    img.src = url;
+
+    img.className = "photo";
+
+    const del =
+    document.createElement("button");
+
+    del.innerText = "删除";
+
+    del.onclick = function(){
+
+        container.remove();
+    };
+
+    container.appendChild(img);
+
+    container.appendChild(del);
+
+    gallery.appendChild(container);
+}
+
+</script>
+
+</body>

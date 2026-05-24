@@ -1,0 +1,106 @@
+ <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>若菡宝宝专属</title>
+
+   <link rel="stylesheet" href="宝宝网/style.css">
+</head>
+<body>
+
+        <h1>欢迎我家小宝！</h1>
+
+
+<a href="ruo&yan合照.html" class="button">
+    ruo&yan合照
+</a >
+<p style="text-align: center; font-size: 26px; color: #ff69b4; margin: 30px 0; font-family: 'Microsoft YaHei';">
+    和我家小宝今天已经
+    <span id="babyDays" style="font-size: 42px; font-weight: bold; color: #ff1493;">0</span>
+    天啦 ❤️
+</p >
+ <!-- 轮播图区域 -->
+    <div class="slider">
+        <div class="slides">
+            <div class="slide">
+                <img src="宝宝网/images/bao.jpg" width="200">
+            </div>
+            <div class="slide">
+                <img src="宝宝网/images/4.jpg" width="200">
+            </div>
+            <div class="slide">
+                <img src="宝宝网/images/3.jpg" width="200">
+            </div>
+            <div class="slide">
+                <img src="宝宝网/images/2.jpg" width="200">
+           </div>
+            <div class="slide">
+                <img src="宝宝网/images/5.jpg" width="200">
+
+            </div>
+               <div class="slide">
+                <img src="宝宝网/images/6.jpg" width="200">
+
+            </div>
+  <div class="slide">
+                <img src="宝宝网/images/7.jpg" width="200">
+
+            </div>
+  <div class="slide">
+                <img src="宝宝网/images/8.jpg" width="200">
+
+            </div>
+  <div class="slide">
+                <img src="宝宝网/images/9.jpg" width="200">
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let currentIndex = 0;  // 当前显示的图片索引
+        const slides = document.querySelector('.slides');
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        // 自动切换图片
+        function showNextSlide() {
+            currentIndex = (currentIndex + 1) % totalSlides;  // 循环显示图片
+            updateSlider();
+        }
+
+        // 更新轮播图
+        function updateSlider() {
+            slides.style.transform = `translateX(-${currentIndex * 100}%)`;  // 移动到对应的图片
+        }
+
+        // 每3秒自动切换图片
+        setInterval(showNextSlide, 3000);
+
+        function goToPage2() {
+            window.location.href = "page2.html"; // 页面跳转到 page2.html
+        }
+   
+    </script>
+     
+    <script>
+// ==================== 我家小宝天数计数器 ====================
+function updateBabyDays() {
+    // ★★★★★ 这里改成宝宝出生日期 ★★★★★
+    const birthDate = new Date('2023-10-29');   // ←←← 改成真正的出生年-月-日！！！
+    
+    const now = new Date();
+    const diffTime = now - birthDate;
+    const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    document.getElementById('babyDays').textContent = days;
+}
+
+// 页面加载时立刻执行 + 每分钟检查一次（防止跨天）
+window.onload = updateBabyDays;
+setInterval(updateBabyDays, 60000);
+</script>
+    </body>
+
+</html>
