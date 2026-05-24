@@ -1,130 +1,164 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ruo&yan合照</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ruo&yan合照</title>
+  <link rel="stylesheet" href="宝宝网/style2.css" />
 
-   <link rel="stylesheet" href="宝宝网/style2.css">
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
+  <h2>我们的相册 ❤️</h2>
 
-<h2>我们的相册 ❤️</h2>
+  <input type="file" id="fileInput" accept="image/*">
+  <button onclick="uploadImage()">上传照片</button>
 
-<input type="file" id="fileInput">
+  <div id="gallery"></div>
 
-<button onclick="uploadImage()">
-上传照片
-</button>
+  <div class="image-grid">
+    <img src="宝宝网/合照/1.jpg">
+    <img src="宝宝网/合照/2.jpg">
+    <img src="宝宝网/合照/3.jpg">
+    <img src="宝宝网/合照/4.jpg">
+    <img src="宝宝网/合照/5.jpg">
+    <img src="宝宝网/合照/6.jpg">
+    <img src="宝宝网/合照/7.jpg">
+    <img src="宝宝网/合照/8.jpg">
+    <img src="宝宝网/合照/9.jpg">
+    <img src="宝宝网/合照/10.jpg">
+    <img src="宝宝网/合照/11.jpg">
+    <img src="宝宝网/合照/12.jpg">
+    <img src="宝宝网/合照/13.jpg">
+    <img src="宝宝网/合照/14.jpg">
+    <img src="宝宝网/合照/15.jpg">
+    <img src="宝宝网/合照/16.jpg">
+    <img src="宝宝网/合照/17.jpg">
+    <img src="宝宝网/合照/18.jpg">
+    <img src="宝宝网/合照/19.jpg">
+    <img src="宝宝网/合照/20.jpg">
+    <img src="宝宝网/合照/21.jpg">
+    <img src="宝宝网/合照/22.jpg">
+    <img src="宝宝网/合照/23.jpg">
+    <img src="宝宝网/合照/24.jpg">
+    <img src="宝宝网/合照/25.jpg">
+  </div>
 
-<div id="gallery"></div>
+  <script>
+    // ================== 1. 先填你的 Supabase 信息 ==================
+  const SUPABASE_URL = "https://grphursesmjllprmjbze.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_kl6Ycx4WVIDdkOxB1fbEXA_T873c28v";
+    const BUCKET_NAME = "photos";
 
-<div class="image-grid">
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-<img src="宝宝网/合照/1.jpg">
-<img src="宝宝网/合照/2.jpg">
-<img src="宝宝网/合照/3.jpg">
-<img src="宝宝网/合照/4.jpg">
-<img src="宝宝网/合照/5.jpg">
-<img src="宝宝网/合照/6.jpg">
-<img src="宝宝网/合照/7.jpg">
-<img src="宝宝网/合照/8.jpg">
-<img src="宝宝网/合照/9.jpg">
-<img src="宝宝网/合照/10.jpg">
-<img src="宝宝网/合照/11.jpg">
-<img src="宝宝网/合照/12.jpg">
-<img src="宝宝网/合照/13.jpg">
-<img src="宝宝网/合照/14.jpg">
-<img src="宝宝网/合照/15.jpg">
-<img src="宝宝网/合照/16.jpg">
-<img src="宝宝网/合照/17.jpg">
-<img src="宝宝网/合照/18.jpg">
-<img src="宝宝网/合照/19.jpg">
-<img src="宝宝网/合照/20.jpg">
-<img src="宝宝网/合照/21.jpg">
-<img src="宝宝网/合照/22.jpg">
-<img src="宝宝网/合照/23.jpg">
-<img src="宝宝网/合照/24.jpg">
-<img src="宝宝网/合照/25.jpg">
+    const gallery = document.getElementById("gallery");
 
-</div>
+    // ================== 2. 页面加载时读取图片 ==================
+    window.addEventListener("load", loadGallery);
 
-<script>
+    async function loadGallery() {
+      gallery.innerHTML = "正在加载相册...";
 
-const gallery =
-document.getElementById("gallery");
+      const { data, error } = await supabase.storage
+        .from(BUCKET_NAME)
+        .list("", {
+          sortBy: { column: "created_at", order: "desc" }
+        });
 
-async function uploadImage(){
-
-    const file =
-    document.getElementById("fileInput").files[0];
-
-    if(!file){
-
-        alert("请选择照片");
-
+      if (error) {
+        console.error(error);
+        gallery.innerHTML = "加载失败，请检查 Supabase 权限。";
         return;
+      }
+
+      if (!data || data.length === 0) {
+        gallery.innerHTML = "还没有上传照片。";
+        return;
+      }
+
+      gallery.innerHTML = "";
+
+      for (const file of data) {
+        const { data: urlData, error: urlError } = await supabase.storage
+          .from(BUCKET_NAME)
+          .createSignedUrl(file.name, 60 * 60); // 1小时有效
+
+        if (urlError) {
+          console.error(urlError);
+          continue;
+        }
+
+        addImage(file.name, urlData.signedUrl);
+      }
     }
 
-    const formData =
-    new FormData();
+    // ================== 3. 上传图片 ==================
+    async function uploadImage() {
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
 
-    formData.append("file", file);
+      if (!file) {
+        alert("请选择照片");
+        return;
+      }
 
-    formData.append(
-        "upload_preset",
-        "myphotos"
-    );
+      // 生成一个不会重复的文件名
+      const fileName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
 
-    const response = await fetch(
+      const { data, error } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(fileName, file, {
+          cacheControl: "3600",
+          upsert: false
+        });
 
-        "https://api.cloudinary.com/v1_1/dhgwaxc53/image/upload",
+      if (error) {
+        console.error(error);
+        alert("上传失败：" + error.message);
+        return;
+      }
 
-        {
-            method:"POST",
-            body:formData
+      alert("上传成功！");
+      fileInput.value = "";
+      loadGallery(); // 重新刷新相册
+    }
+
+    // ================== 4. 显示图片 + 删除按钮 ==================
+    function addImage(filePath, url) {
+      const container = document.createElement("div");
+      container.className = "photo-box";
+
+      const img = document.createElement("img");
+      img.src = url;
+      img.className = "photo";
+
+      const del = document.createElement("button");
+      del.innerText = "删除";
+      del.onclick = async function () {
+        const confirmDelete = confirm("确定要删除这张照片吗？");
+        if (!confirmDelete) return;
+
+        const { error } = await supabase.storage
+          .from(BUCKET_NAME)
+          .remove([filePath]);
+
+        if (error) {
+          console.error(error);
+          alert("删除失败：" + error.message);
+          return;
         }
-    );
-
-    const data =
-    await response.json();
-
-    addImage(data.secure_url);
-}
-
-function addImage(url){
-
-    const container =
-    document.createElement("div");
-
-    container.className =
-    "photo-box";
-
-    const img =
-    document.createElement("img");
-
-    img.src = url;
-
-    img.className = "photo";
-
-    const del =
-    document.createElement("button");
-
-    del.innerText = "删除";
-
-    del.onclick = function(){
 
         container.remove();
-    };
+        alert("已删除");
+      };
 
-    container.appendChild(img);
-
-    container.appendChild(del);
-
-    gallery.appendChild(container);
-}
-
-</script>
-
+      container.appendChild(img);
+      container.appendChild(del);
+      gallery.appendChild(container);
+    }
+  </script>
 </body>
+</html>
